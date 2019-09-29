@@ -2,17 +2,28 @@ CC := gcc
 LD := gcc
 TARGET := stree
 
-SRC := src
-OBJ := obj
+SRC := ./src
+INC := ./inc
+OBJ := ./obj
 
-OBJECTS := $(OBJ)/stree.o
+OBJECTS := $(OBJ)/util.o\
+           $(OBJ)/sexpr.o\
+           $(OBJ)/tree.o\
+           $(OBJ)/stree.o\
+
 DEPS := $(OBJECTS:.o=.d)
 
-CFLAGS  :=
+CFLAGS  := -I$(INC)
 LDFLAGS := -lc
 
 .PHONY: all
 all: $(TARGET)
+
+debug: CFLAGS += -g
+debug: $(TARGET)
+
+test: CFLAGS += -g
+test: $(TARGET)-test
 
 ifneq ($(filter clean,$(MAKECMDGOALS)),clean)
 -include $(DEPS)
@@ -21,6 +32,11 @@ endif
 $(TARGET): $(OBJECTS)
 	@echo [LD] -o $@ $^
 	@$(LD) $(LDFLAGS) -o $@ $^
+
+$(TARGET)-test: CFLAGS += -DTEST
+$(TARGET)-test: $(OBJECTS) $(OBJ)/test.o
+	@echo [LD] -o $@ $^
+	@$(LD) $(LDFLAGS) --entry test -o $@ $^
 
 $(DEPS) $(OBJECTS): | $(OBJ)/
 
@@ -39,5 +55,5 @@ $(OBJ)/%.d: $(SRC)/%.c
 
 .PHONY: clean
 clean:
-	$(RM) -r $(OBJ) $(TARGET)
+	$(RM) -r $(OBJ) $(TARGET) $(TARGET)-test
 
