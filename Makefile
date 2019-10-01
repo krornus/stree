@@ -8,6 +8,7 @@ OBJ := ./obj
 
 OBJECTS := $(OBJ)/util.o\
            $(OBJ)/sexpr.o\
+           $(OBJ)/stack.o\
            $(OBJ)/tree.o\
            $(OBJ)/stree.o\
 
